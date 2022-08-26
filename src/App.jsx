@@ -1,9 +1,11 @@
-function App() {
+import Calculator from './components/Calculator'
+
+const App = () => {
   return (
-    <div className="App">
-      <h1>Calculator app </h1>
-    </div>
-  );
+      <div>
+          <Calculator/>
+      </div>
+  )
 }
 
-export default App;
+export default App
