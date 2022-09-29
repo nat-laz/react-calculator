@@ -1,4 +1,5 @@
 const Button = ({ value, className, onClick }) => {
+  
   const addClass = (val) => {
     if (val === "C") {
       return "red-btn";
