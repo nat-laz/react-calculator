@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Display from "./Display";
 import Keypad from "./Keypad";
@@ -18,42 +17,6 @@ const Calculator = () => {
   const [symbol, setSymbol] = useState("");
   const [result, setResult] = useState("");
 
-  //Functionality-----------------------------
-
-  const calc = (num1, operand, num2 = "") => {
-    let a = num1.toString().substring(0, 9);
-    let b = num2.toString().substring(0, 9);
-
-    switch (operand) {
-      case "÷":
-        setResult(+(a / b));
-        setBtnNum(+(a / b));
-        setBtnNum2("");
-        setResult("");
-        break;
-      case "×":
-        setResult(a * b);
-        setBtnNum(a * b);
-        setBtnNum2("");
-        setResult("");
-        break;
-      case "-":
-        setResult(a - b);
-        setBtnNum(a - b);
-        setBtnNum2("");
-        setResult("");
-        break;
-      case "+":
-        setResult(+a + +b);
-        setBtnNum(+a + +b);
-        setBtnNum2("");
-        setResult("");
-        break;
-      default:
-        break;
-    }
-  };
-
   const reset = () => {
     setBtnNum("");
     setBtnNum2("");
@@ -61,80 +24,71 @@ const Calculator = () => {
     setSymbol("");
   };
 
-  const displayOnScreen = (e) => {
-    let val = e.target.innerHTML;
-
-    val === "=" && calc(btnNum, symbol, btnNum2);
-
-    val === "%" && setResult(btnNum / 100);
-
-    if (!btnNum && isNaN(val)) {
-      return;
+  const calculate = () => {
+    const num1 = parseFloat(btnNum);
+    const num2 = parseFloat(btnNum2);
+    let res;
+    switch (symbol) {
+      case "÷": res = num1 / num2; break;
+      case "×": res = num1 * num2; break;
+      case "-": res = num1 - num2; break;
+      case "+": res = num1 + num2; break;
+      default: break;
     }
-
-    if (!btnNum && val === ".") {
-      setBtnNum("0.");
-    }
-    if (btnNum && symbol && !btnNum2 && val === ".") {
-      setBtnNum2("0.");
-    }
-
-    if (btnNum && !symbol && val === ".") {
-      if (btnNum.includes(".")) {
-        return;
-      }
-      setBtnNum((prevValue) => prevValue + ".");
-    }
-
-    if (btnNum && symbol && btnNum2 && val === ".") {
-      if (btnNum2.includes(".")) {
-        return;
-      }
-      setBtnNum2((prevValue) => prevValue + ".");
-    }
-    if (btnNum && btnNum2 && val === " ± ") {
-      setBtnNum2(btnNum2 * -1);
-    }
-    if (btnNum && !btnNum2 && val === " ± ") {
-      setBtnNum(btnNum * -1);
-    }
-    if (!isNaN(val) && symbol === "") {
-      if (val === "0" && !btnNum) {
-        return;
-      }
-      setBtnNum((prevValue) => prevValue + val);
-    }
-    if (!isNaN(val) && symbol && btnNum) {
-      if (val === "0" && !btnNum2) {
-        return;
-      }
-      setBtnNum2((prevValue) => prevValue + val);
-    }
-    if (isNaN(val) && val !== " ± " && val !== ".") {
-      setSymbol(val);
-    }
-
-    val === "C" && reset();
+    setResult(res);
+    setBtnNum(res.toString());
+    setBtnNum2("");
+    setSymbol("");
   };
+  
+  const handleButtonClick = (val) => {
+    if (val === 'C') return reset();
+    if (val === '=') return calculate();
+    if (val === '%') return setResult((parseFloat(btnNum) / 100).toString());
+    
+    if (!btnNum && isNaN(val)) return;
+    if (!btnNum && val === '.') return setBtnNum('0.');
+    if (btnNum && symbol && !btnNum2 && val === '.') return setBtnNum2('0.');
+    
+    if (btnNum && !symbol && val === '.') {
+      if (btnNum.includes('.')) return;
+      return setBtnNum(prevValue => prevValue + '.');
+    }
+    
+    if (btnNum && symbol && btnNum2 && val === '.') {
+      if (btnNum2.includes('.')) return;
+      return setBtnNum2(prevValue => prevValue + '.');
+    }
+    
+    if (btnNum && btnNum2 && val === ' ± ') return setBtnNum2((prevValue => (parseFloat(prevValue) * -1).toString()));
+    if (btnNum && !btnNum2 && val === ' ± ') return setBtnNum((prevValue => (parseFloat(prevValue) * -1).toString()));
+    
+    // Place the new conditions here
+    if (!isNaN(val) && !symbol) {
+      if ((val === '0' && !btnNum) || (val === '0' && btnNum === '0')) return;
+      return setBtnNum(prevValue => prevValue === '0' ? val.toString() : prevValue + val);
+    }
+    
+    if (!isNaN(val) && symbol) {
+      if ((val === '0' && !btnNum2) || (val === '0' && btnNum2 === '0')) return;
+      return setBtnNum2(prevValue => prevValue === '0' ? val.toString() : prevValue + val);
+    }
+    
+    if (isNaN(val) && val !== ' ± ' && val !== '.') return setSymbol(val);
+};
+
+  
 
   return (
     <div className="main-container">
-      <Display
-        text={
-          result
-            ? result.toString().substring(0, 9)
-            : btnNum2
-            ? btnNum2.toString().substring(0, 9)
-            : btnNum.toString().substring(0, 9)
-        }
-      />
+      <Display text={result || btnNum2 || btnNum || "0"} />
       <Keypad>
         {btnValues.flat().map((value, i) => (
           <Button
             className={value === 0 ? "long-btn" : "btn"}
             key={i}
             value={value}
-            onClick={displayOnScreen}
+            onClick={() => handleButtonClick(value)}
           />
         ))}
       </Keypad>

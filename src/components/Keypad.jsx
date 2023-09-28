@@ -1,5 +1,5 @@
-const Keypad = ({ children }) => {
-  return <div className="btn-wrapper">{children}</div>;
-};
+const Keypad = ({ children }) => (
+  <div className="btn-wrapper">{children}</div>
+);
 
 export default Keypad;

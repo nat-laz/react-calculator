@@ -1,24 +1,23 @@
 const Button = ({ value, className, onClick }) => {
-  
-  const addClass = (val) => {
-    if (val === "C") {
-      return "red-btn";
-    } else if (val === " ± " || val === "%") {
-      return "blue-btn";
-    } else if (val === "÷" || val === "×" || val === "+" || val === "-")
-      return "green-btn";
-    if (val === "=") return "yellow-btn";
+  const getAdditionalClass = (val) => {
+    switch (val) {
+      case "C": return "red-btn";
+      case " ± ":
+      case "%": return "blue-btn";
+      case "÷":
+      case "×":
+      case "+":
+      case "-": return "green-btn";
+      case "=": return "yellow-btn";
+      default: return "";
+    }
   };
-  const diffColorResult = addClass(value);
+
   return (
-    <div onClick={onClick} className={`${className} ${diffColorResult}`}>
+    <div onClick={onClick} className={`${className} ${getAdditionalClass(value)}`}>
       {value}
     </div>
   );
-};
-
-Button.defaultProps = {
-  styleBtn: "",
 };
 
 export default Button;
