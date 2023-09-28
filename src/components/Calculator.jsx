@@ -40,7 +40,7 @@ const Calculator = () => {
     setBtnNum2("");
     setSymbol("");
   };
-  
+
   const handleButtonClick = (val) => {
     if (val === 'C') return reset();
     if (val === '=') return calculate();
@@ -63,7 +63,6 @@ const Calculator = () => {
     if (btnNum && btnNum2 && val === ' ± ') return setBtnNum2((prevValue => (parseFloat(prevValue) * -1).toString()));
     if (btnNum && !btnNum2 && val === ' ± ') return setBtnNum((prevValue => (parseFloat(prevValue) * -1).toString()));
     
-    // Place the new conditions here
     if (!isNaN(val) && !symbol) {
       if ((val === '0' && !btnNum) || (val === '0' && btnNum === '0')) return;
       return setBtnNum(prevValue => prevValue === '0' ? val.toString() : prevValue + val);
@@ -78,7 +77,6 @@ const Calculator = () => {
 };
 
   
-
   return (
     <div className="main-container">
       <Display text={result || btnNum2 || btnNum || "0"} />
